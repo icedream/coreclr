@@ -6,19 +6,20 @@ This repo includes several documents that explain both high-level and low-level 
 Book of the Runtime
 ===================
 
+- [Book of the Runtime FAQ](botr-faq.md)
 - [Introduction to the Common Language Runtime](intro-to-clr.md)
-- [Mscorlib and Calling Into the Runtime](mscorlib.md)
+- [Garbage Collection Design](garbage-collection.md)
 - [Type Loader](type-loader.md)
 - [Method Descriptor](method-descriptor.md)
 - [Virtual Stub Dispatch](virtual-stub-dispatch.md)
 - [Stack Walking](stackwalking.md)
-- [Book of the Runtime FAQ](botr-faq.md)
+- [Mscorlib and Calling Into the Runtime](mscorlib.md)
 
 .NET Runtime Specs
 ==================
 
 - [CLR Coding Guide](clr-code-guide.md)
-- [.NET Standards](dotnet-standards.md)
+- [.NET Standards (ECMA)](dotnet-standards.md)
 
 Decoder Rings
 =============
