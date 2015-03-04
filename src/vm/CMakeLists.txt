@@ -1,14 +1,10 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# WINTODO: Conditionalize the next check
-# AMD64 specific sources subdirectory
-set(AMD64_SOURCES_DIR amd64)
-
 # Needed due to the cmunged files being in the binary folders, the set(CMAKE_INCLUDE_CURRENT_DIR ON) is not enough
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}) 
 
 include_directories(${CLR_DIR}/src/gc)
-include_directories(${AMD64_SOURCES_DIR})
+include_directories(${ARCH_SOURCES_DIR})
 
 add_definitions(-D_TARGET_AMD64_=1)
 add_definitions(-DDBG_TARGET_64BIT=1)
@@ -299,77 +295,124 @@ list(APPEND VM_SOURCES_DAC
     clrprivbinderwinrt.cpp
     clrprivtypecachewinrt.cpp
 )
+endif()
 
 # AMD64 specific asm sources
-set(VM_SOURCES_WKS_AMD64_ASM
-    ${AMD64_SOURCES_DIR}/AsmHelpers.asm
-    ${AMD64_SOURCES_DIR}/CallDescrWorkerAMD64.asm
-    ${AMD64_SOURCES_DIR}/ComCallPreStub.asm
-    ${AMD64_SOURCES_DIR}/CrtHelpers.asm
-    ${AMD64_SOURCES_DIR}/GenericComCallStubs.asm
-    ${AMD64_SOURCES_DIR}/GenericComPlusCallStubs.asm
-    ${AMD64_SOURCES_DIR}/getstate.asm
-    ${AMD64_SOURCES_DIR}/InstantiatingStub.asm
-    ${AMD64_SOURCES_DIR}/JitHelpers_Fast.asm
-    ${AMD64_SOURCES_DIR}/JitHelpers_FastWriteBarriers.asm
-    ${AMD64_SOURCES_DIR}/JitHelpers_InlineGetAppDomain.asm
-    ${AMD64_SOURCES_DIR}/JitHelpers_InlineGetThread.asm
-    ${AMD64_SOURCES_DIR}/JitHelpers_Slow.asm
-    ${AMD64_SOURCES_DIR}/PInvokeStubs.asm
-    ${AMD64_SOURCES_DIR}/RedirectedHandledJITCase.asm
-    ${AMD64_SOURCES_DIR}/ThePreStubAMD64.asm
-    ${AMD64_SOURCES_DIR}/ExternalMethodFixupThunk.asm
-    ${AMD64_SOURCES_DIR}/TlsGetters.asm # Condition="'$(FeatureImplicitTls)' != 'true'
-    ${AMD64_SOURCES_DIR}/UMThunkStub.asm
-    ${AMD64_SOURCES_DIR}/VirtualCallStubAMD64.asm
-)
+if (IS_64BIT_BUILD EQUAL 1)
 
+    if(WIN32)
+        set(VM_SOURCES_WKS_AMD64_ASM
+            ${ARCH_SOURCES_DIR}/AsmHelpers.asm
+            ${ARCH_SOURCES_DIR}/CallDescrWorkerAMD64.asm
+            ${ARCH_SOURCES_DIR}/ComCallPreStub.asm
+            ${ARCH_SOURCES_DIR}/CrtHelpers.asm
+            ${ARCH_SOURCES_DIR}/GenericComCallStubs.asm
+            ${ARCH_SOURCES_DIR}/GenericComPlusCallStubs.asm
+            ${ARCH_SOURCES_DIR}/getstate.asm
+            ${ARCH_SOURCES_DIR}/InstantiatingStub.asm
+            ${ARCH_SOURCES_DIR}/JitHelpers_Fast.asm
+            ${ARCH_SOURCES_DIR}/JitHelpers_FastWriteBarriers.asm
+            ${ARCH_SOURCES_DIR}/JitHelpers_InlineGetAppDomain.asm
+            ${ARCH_SOURCES_DIR}/JitHelpers_InlineGetThread.asm
+            ${ARCH_SOURCES_DIR}/JitHelpers_Slow.asm
+            ${ARCH_SOURCES_DIR}/PInvokeStubs.asm
+            ${ARCH_SOURCES_DIR}/RedirectedHandledJITCase.asm
+            ${ARCH_SOURCES_DIR}/ThePreStubAMD64.asm
+            ${ARCH_SOURCES_DIR}/ExternalMethodFixupThunk.asm
+            ${ARCH_SOURCES_DIR}/TlsGetters.asm # Condition="'$(FeatureImplicitTls)' != 'true'
+            ${ARCH_SOURCES_DIR}/UMThunkStub.asm
+            ${ARCH_SOURCES_DIR}/VirtualCallStubAMD64.asm
+        )
+
+    else()
+        set(VM_SOURCES_WKS_AMD64_ASM
+            ${ARCH_SOURCES_DIR}/calldescrworkeramd64.S
+            ${ARCH_SOURCES_DIR}/crthelpers.S
+            ${ARCH_SOURCES_DIR}/externalmethodfixupthunk.S
+            ${ARCH_SOURCES_DIR}/getstate.S
+            ${ARCH_SOURCES_DIR}/jithelpers_fast.S
+            ${ARCH_SOURCES_DIR}/jithelpers_fastwritebarriers.S
+            ${ARCH_SOURCES_DIR}/jithelpers_slow.S
+            ${ARCH_SOURCES_DIR}/theprestubamd64.S
+            ${ARCH_SOURCES_DIR}/unixasmhelpers.S
+            ${ARCH_SOURCES_DIR}/umthunkstub.S
+            ${ARCH_SOURCES_DIR}/virtualcallstubamd64.S
+        )
+    endif(WIN32)
+
+    # AMD64 specific cpp sources
+    set(VM_SOURCES_DAC_AND_WKS_AMD64
+        ${ARCH_SOURCES_DIR}/cgenamd64.cpp
+        ${ARCH_SOURCES_DIR}/excepamd64.cpp
+        ${ARCH_SOURCES_DIR}/gmsamd64.cpp
+        ${ARCH_SOURCES_DIR}/stublinkeramd64.cpp
+    )
+
+    set(VM_SOURCES_WKS_AMD64
+    #The following files need to be ported to Linux
+        ${ARCH_SOURCES_DIR}/jithelpersamd64.cpp
+        ${ARCH_SOURCES_DIR}/jitinterfaceamd64.cpp
+        ${ARCH_SOURCES_DIR}/profiler.cpp
+        jitinterfacegen.cpp
+    )
+
+    if(CLR_CMAKE_PLATFORM_UNIX)
+
+    list(APPEND VM_SOURCES_WKS_AMD64
+        ${ARCH_SOURCES_DIR}/unixstubs.cpp
+    )
+
+    endif(CLR_CMAKE_PLATFORM_UNIX)
+
+    set(VM_SOURCES_DAC_AMD64
+        gcinfodecoder.cpp
+        dbggcinfodecoder.cpp
+        exceptionhandling.cpp
+    )
 else()
-set(VM_SOURCES_WKS_AMD64_ASM
-    ${AMD64_SOURCES_DIR}/calldescrworkeramd64.S
-    ${AMD64_SOURCES_DIR}/crthelpers.S
-    ${AMD64_SOURCES_DIR}/externalmethodfixupthunk.S
-    ${AMD64_SOURCES_DIR}/getstate.S
-    ${AMD64_SOURCES_DIR}/jithelpers_fast.S
-    ${AMD64_SOURCES_DIR}/jithelpers_fastwritebarriers.S
-    ${AMD64_SOURCES_DIR}/jithelpers_slow.S
-    ${AMD64_SOURCES_DIR}/theprestubamd64.S
-    ${AMD64_SOURCES_DIR}/unixasmhelpers.S
-    ${AMD64_SOURCES_DIR}/umthunkstub.S
-    ${AMD64_SOURCES_DIR}/virtualcallstubamd64.S
-)
-endif(WIN32)
+    # I WAS LAZY HERE
+    if(WIN32)
+        set(VM_SOURCES_WKS_AMD64_ASM
+            ${ARCH_SOURCES_DIR}/AsmHelpers.asm
+            ${ARCH_SOURCES_DIR}/fptext.asm
+            ${ARCH_SOURCES_DIR}/gmsasm.asm
+            ${ARCH_SOURCES_DIR}/jithelp.asm
+            ${ARCH_SOURCES_DIR}/RedirectedHandledJITCase.asm
+        )
 
-# AMD64 specific cpp sources
+    else()
+        set(VM_SOURCES_WKS_AMD64_ASM
+        )
+    endif(WIN32)
 
-set(VM_SOURCES_DAC_AND_WKS_AMD64
-    ${AMD64_SOURCES_DIR}/cgenamd64.cpp
-    ${AMD64_SOURCES_DIR}/excepamd64.cpp
-    ${AMD64_SOURCES_DIR}/gmsamd64.cpp
-    ${AMD64_SOURCES_DIR}/stublinkeramd64.cpp
-)
+    set(VM_SOURCES_DAC_AND_WKS_AMD64
+        ${ARCH_SOURCES_DIR}/cgenx86.cpp
+        ${ARCH_SOURCES_DIR}/excepx86.cpp
+        ${ARCH_SOURCES_DIR}/gmsx86.cpp
+        ${ARCH_SOURCES_DIR}/stublinkerx86.cpp
+    )
 
-set(VM_SOURCES_WKS_AMD64
-#The following files need to be ported to Linux
-    ${AMD64_SOURCES_DIR}/jithelpersamd64.cpp
-    ${AMD64_SOURCES_DIR}/jitinterfaceamd64.cpp
-    ${AMD64_SOURCES_DIR}/profiler.cpp
-    jitinterfacegen.cpp
-)
+    set(VM_SOURCES_WKS_AMD64
+    #The following files need to be ported to Linux
+        ${ARCH_SOURCES_DIR}/jitinterfacex86.cpp
+        ${ARCH_SOURCES_DIR}/profiler.cpp
+        jitinterfacegen.cpp
+    )
 
-if(CLR_CMAKE_PLATFORM_UNIX)
+    if(CLR_CMAKE_PLATFORM_UNIX)
 
-list(APPEND VM_SOURCES_WKS_AMD64
-    ${AMD64_SOURCES_DIR}/unixstubs.cpp
-)
+    list(APPEND VM_SOURCES_WKS_AMD64
+        ${ARCH_SOURCES_DIR}/unixstubs.cpp
+    )
 
-endif(CLR_CMAKE_PLATFORM_UNIX)
+    endif(CLR_CMAKE_PLATFORM_UNIX)
 
-set(VM_SOURCES_DAC_AMD64
-    gcinfodecoder.cpp
-    dbggcinfodecoder.cpp
-    exceptionhandling.cpp
-)
+    set(VM_SOURCES_DAC_AMD64
+        gcinfodecoder.cpp
+        dbggcinfodecoder.cpp
+        exceptionhandling.cpp
+    )
+endif()
 
 list(APPEND VM_SOURCES_WKS 
     ${VM_SOURCES_WKS_AMD64}

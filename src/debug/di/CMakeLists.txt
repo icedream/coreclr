@@ -35,20 +35,17 @@ set(CORDBDI_SOURCES
 
 if(WIN32)
     #use static crt
-    add_definitions(-MT) 
+    add_definitions(-MT)
 
-    set(CORDBDI_SOURCES
-      ${CORDBDI_SOURCES}
-      amd64/floatconversion.asm
-    )
+    if(EXISTS "${ARCH_SOURCES_DIR}/floatconversion.asm")
+        LIST(APPEND CORDBDI_SOURCES "${ARCH_SOURCES_DIR}/floatconversion.asm")
+    endif()
 elseif(CLR_CMAKE_PLATFORM_UNIX)
     add_compile_options(-fPIC)
 
-    set(CORDBDI_SOURCES
-      ${CORDBDI_SOURCES}
-      amd64/floatconversion.S
-    )
-
+    if(EXISTS "${ARCH_SOURCES_DIR}/floatconversion.S")
+        LIST(APPEND CORDBDI_SOURCES "${ARCH_SOURCES_DIR}/floatconversion.S")
+    endif()
 endif(WIN32)
 
 add_precompiled_header(stdafx.h stdafx.cpp CORDBDI_SOURCES)

@@ -1,6 +1,6 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-include_directories(BEFORE "../vm/amd64")
+include_directories(BEFORE "../vm/${ARCH_SOURCES_DIR}")
 include_directories(BEFORE "../vm")
 include_directories(BEFORE "inc")
       

@@ -12,6 +12,7 @@ setlocal
 set basePath=%1
 :: remove quotes
 set "basePath=%basePath:"=%"
+
 :: remove trailing slash
 if %basePath:~-1%==\ set "basePath=%basePath:~0,-1%"
 
@@ -21,7 +22,11 @@ if defined CMakePath goto DoGen
 for /f "delims=" %%a in ('powershell -NoProfile -ExecutionPolicy RemoteSigned "& .\probe-win.ps1"') do %%a
 
 :DoGen
-"%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\src\pal\tools\windows-compiler-override.txt" -G "Visual Studio 12 2013 Win64" %1
+if /i "%__BuildArch%"=="x86" (
+  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\src\pal\tools\windows-compiler-override.txt" -G "Visual Studio 12 2013" %1
+) else (
+  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\src\pal\tools\windows-compiler-override.txt" -G "Visual Studio 12 2013 Win64" %1
+)
 endlocal
 GOTO :DONE
 

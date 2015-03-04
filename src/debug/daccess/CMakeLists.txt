@@ -37,17 +37,11 @@ set(DACCESS_SOURCES
   datatargetadapter.cpp
 )
 
-if(IS_64BIT_BUILD EQUAL 1)
-  include_directories(amd64)
+include_directories(${ARCH_SOURCES_DIR})
 
-  list(APPEND DACCESS_SOURCES
-    amd64/primitives.cpp
-  )
-else()
-  list(APPEND DACCESS_SOURCES
-    i386/primitives.cpp
-  )
-endif(IS_64BIT_BUILD EQUAL 1)
+list(APPEND DACCESS_SOURCES
+  ${ARCH_SOURCES_DIR}/primitives.cpp
+)
 
 convert_to_absolute_path(DACCESS_SOURCES ${DACCESS_SOURCES})
 

@@ -3,7 +3,7 @@ include_directories("strongname/inc")
 include_directories("inc/winrt")
 
 include_directories("debug/inc")
-include_directories("debug/inc/amd64")
+include_directories("debug/inc/${ARCH_SOURCES_DIR}")
 include_directories("debug/inc/dump")
 include_directories("md/inc")
 include_directories("classlibnative/bcltype")

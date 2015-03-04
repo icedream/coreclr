@@ -21,6 +21,7 @@ set __MSBCleanBuildArgs=
 if "%1" == "" goto ArgsDone
 if /i "%1" == "/?" goto Usage
 if /i "%1" == "x64"    (set __BuildArch=x64&&shift&goto Arg_Loop)
+if /i "%1" == "x86"    (set __BuildArch=x86&&shift&goto Arg_Loop)
 
 if /i "%1" == "debug"    (set __BuildType=debug&shift&goto Arg_Loop)
 if /i "%1" == "release"   (set __BuildType=release&shift&goto Arg_Loop)
@@ -113,7 +114,8 @@ echo Commencing build of native components for %__BuildOS%.%__BuildArch%.%__Buil
 echo.
 
 :: Set the environment for the native build
-call "%VS120COMNTOOLS%\..\..\VC\vcvarsall.bat" x86_amd64
+if /i "%__BuildArch%" == "x64" call "%VS120COMNTOOLS%\..\..\VC\vcvarsall.bat" x86_amd64
+if /i "%__BuildArch%" == "x86" call "%VS120COMNTOOLS%\..\..\VC\vcvarsall.bat" x86
 
 if exist "%VSINSTALLDIR%DIA SDK" goto GenVSSolution
 echo Error: DIA SDK is missing at "%VSINSTALLDIR%DIA SDK". ^
@@ -191,7 +193,7 @@ echo.
 echo Usage:
 echo %0 BuildArch BuildType [clean] where:
 echo.
-echo BuildArch can be: x64
+echo BuildArch can be: x86 x64
 echo BuildType can be: Debug, Release
 echo Clean - optional argument to force a clean build.
 goto :eof

@@ -26,6 +26,6 @@ add_library(cordbee_wks ${CORDBEE_SOURCES_WKS} ${CMAKE_CURRENT_BINARY_DIR}/dbghe
 else ()
 
 add_compile_options(-fPIC)
-add_library(cordbee_wks ${CORDBEE_SOURCES_WKS} ../amd64/dbghelpers.S)
+add_library(cordbee_wks ${CORDBEE_SOURCES_WKS} ../${ARCH_SOURCES_DIR}/dbghelpers.S)
 
 endif (WIN32)
