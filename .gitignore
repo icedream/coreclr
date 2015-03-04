@@ -263,4 +263,3 @@ CMakeCache.txt
 *.vcproj*
 *.sln
 *.exports*
-binaries_test*/
