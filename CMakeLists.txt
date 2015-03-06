@@ -72,6 +72,9 @@ if(WIN32)
     add_definitions(-DINTERLOCKEDOPS_INTRINSICS)
   ENDIF()
   add_compile_options(/U_MT) # undefine the predefined _MT macro
+  if(NOT IS_64BIT_BUILD)
+    add_compile_options(/Gz) # __stdcall convention, fixes declaration incompatibilities at non-64bit archs
+  endif()
   add_compile_options(/GF) # enable read-only string pooling
   add_compile_options(/Gm-) # disable minimal rebuild
   add_compile_options(/EHa) # enable C++ EH (w/ SEH exceptions)
