@@ -8,6 +8,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/AddPrecompiledHeader.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/ConvertToAbsolutePath.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetCompileDefinitions.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetIncludeDirectories.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetVC12Vars.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/PreprocessDefFile.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/TargetArch.cmake")
 
@@ -244,6 +245,9 @@ else()
   message(FATAL_ERROR "The platform ${CMAKE_SYSTEM_NAME} is not supported by CoreCLR yet.")
 
 endif()
+
+# Visual Studio installation
+GetVC12Vars(VS12)
 
 # Includes
 if (CLR_CMAKE_PLATFORM_WINDOWS)

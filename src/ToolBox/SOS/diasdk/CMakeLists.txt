@@ -1,5 +1,13 @@
 # replace backslashes in path with forward slash
-STRING(REGEX REPLACE "\\\\" "/" VSINSTALLDIR $ENV{VSINSTALLDIR} )
+if("$ENV{VSINSTALLDIR}" STREQUAL "")
+	if((NOT VS12_INSTALLED) OR ("${VS12_VSINSTALLDIR}" STREQUAL ""))
+		message(FATAL_ERROR "Could not find Visual Studio 2013 installation directory. You probably need to run vcvarsall.bat first or install Visual Studio 2013.")
+	else()
+		set(VSINSTALLDIR "${VS12_VSINSTALLDIR}")
+	endif()
+else()
+	STRING(REGEX REPLACE "\\\\" "/" VSINSTALLDIR $ENV{VSINSTALLDIR} )
+endif()
 
 # Generate managed type lib from dia2.idl
 add_custom_target(dialib ALL
