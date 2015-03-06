@@ -1,10 +1,6 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_definitions(-DFEATURE_NO_HOST)
-add_definitions(-D_TARGET_AMD64_=1)
-add_definitions(-DDBG_TARGET_64BIT=1)
-add_definitions(-DDBG_TARGET_AMD64=1)
-add_definitions(-DDBG_TARGET_WIN64=1)
 
 include_directories(BEFORE ${VM_DIR})
 include_directories(BEFORE ${VM_DIR}/${ARCH_SOURCES_DIR})

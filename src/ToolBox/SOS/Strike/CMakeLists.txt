@@ -1,8 +1,7 @@
-add_definitions(-DSOS_TARGET_AMD64=1)
-add_definitions(-D_TARGET_WIN64_=1)
-add_definitions(-DDBG_TARGET_64BIT)
-add_definitions(-DDBG_TARGET_WIN64=1)
-add_definitions(-DSTRIKE)  
+if(IS_64BIT_BUILD)
+  add_definitions(-DSOS_TARGET_AMD64=1)
+endif()
+add_definitions(-DSTRIKE)
 
 remove_definitions(-DUNICODE)
 remove_definitions(-D_UNICODE)

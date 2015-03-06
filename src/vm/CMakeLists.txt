@@ -6,11 +6,6 @@ include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CLR_DIR}/src/gc)
 include_directories(${ARCH_SOURCES_DIR})
 
-add_definitions(-D_TARGET_AMD64_=1)
-add_definitions(-DDBG_TARGET_64BIT=1)
-add_definitions(-DDBG_TARGET_AMD64=1)
-add_definitions(-DDBG_TARGET_WIN64=1)
-
 add_definitions(-DFEATURE_LEAVE_RUNTIME_HOLDER=1)
 
 add_definitions(-DUNICODE)
