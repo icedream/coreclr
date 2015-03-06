@@ -97,6 +97,8 @@ function(target_architecture output_var)
             CMAKE_FLAGS CMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}
         )
 
+        file(REMOVE "${CMAKE_BINARY_DIR}/arch.c")
+
         # Parse the architecture name from the compiler output
         string(REGEX MATCH "cmake_ARCH ([a-zA-Z0-9_]+)" ARCH "${ARCH}")
 
