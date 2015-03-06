@@ -61,6 +61,12 @@ if(WIN32)
   # add_compile_options(/O1) # minimize space
   # add_compile_options(/Oi) # enable intrinsics
   # add_compile_options(/Oy-) # disable suppressing of the creation of frame pointers on the call stack for quicker function calls
+  IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+    add_compile_options(/O1) # minimize space
+    add_compile_options(/Oi) # enable intrinsics
+    add_compile_options(/Oy-) # disable suppressing of the creation of frame pointers on the call stack for quicker function calls
+    add_definitions(-DINTERLOCKEDOPS_INTRINSICS)
+  ENDIF()
   add_compile_options(/U_MT) # undefine the predefined _MT macro
   add_compile_options(/GF) # enable read-only string pooling
   add_compile_options(/Gm-) # disable minimal rebuild
