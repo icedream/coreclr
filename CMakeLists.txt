@@ -261,6 +261,13 @@ endif()
 
 # Visual Studio installation
 GetVC12Vars(VS12)
+if(WIN32)
+  # ASM compiler
+  set(ASM_DIALECT "_MASM")
+  set(CMAKE_CL_64 ${VS12_ML_IS64})
+  set(CMAKE_ASM_MASM_COMPILER_INIT ${VS12_ML})
+  include(${CMAKE_ROOT}/Modules/CMakeDetermineASMCompiler.cmake)
+endif()
 
 # Includes
 if (CLR_CMAKE_PLATFORM_WINDOWS)
