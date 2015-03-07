@@ -62,15 +62,9 @@ if(WIN32)
   # add_compile_options(/nologo) # Suppress Startup Banner
   # add_compile_options(/W3) # set warning level to 3
   # add_compile_options(/WX) # treat warnings as errors
-  # add_compile_options(/O1) # minimize space
-  # add_compile_options(/Oi) # enable intrinsics
-  # add_compile_options(/Oy-) # disable suppressing of the creation of frame pointers on the call stack for quicker function calls
-  IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
-    add_compile_options(/O1) # minimize space
-    add_compile_options(/Oi) # enable intrinsics
-    add_compile_options(/Oy-) # disable suppressing of the creation of frame pointers on the call stack for quicker function calls
-    add_definitions(-DINTERLOCKEDOPS_INTRINSICS)
-  ENDIF()
+  add_compile_options($<$<CONFIG:Release>:/O1> $<$<CONFIG:RelWithDebInfo>:/O1>) # minimize space
+  add_compile_options($<$<CONFIG:Release>:/Oi> $<$<CONFIG:RelWithDebInfo>:/Oi>) # enable intrinsics
+  add_compile_options($<$<CONFIG:Release>:/Oy-> $<$<CONFIG:RelWithDebInfo>:/Oy->) # disable suppressing of the creation of frame pointers on the call stack for quicker function calls
   add_compile_options(/U_MT) # undefine the predefined _MT macro
   if(NOT IS_64BIT_BUILD)
     add_compile_options(/Gz) # __stdcall convention, fixes declaration incompatibilities at non-64bit archs
@@ -151,6 +145,8 @@ if(WIN32)
   add_definitions(-DFEATURE_X509)
   add_definitions(-DFEATURE_X509_SECURESTRINGS)
   add_definitions(-DPROFILING_SUPPORTED)
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DINTERLOCKEDOPS_INTRINSICS") # enable intrinsics-compatible implementations
+  set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DINTERLOCKEDOPS_INTRINSICS") # enable intrinsics-compatible implementations
 
   # Disable the following for UNIX altjit on Windows
   add_definitions(-DFEATURE_MERGE_JIT_AND_ENGINE)
