@@ -37,6 +37,9 @@ set( SOURCES
   regset.cpp
   register_arg_convention.cpp
   emit.cpp
+  emitarm.cpp
+  emitarm64.cpp
+  emitxarch.cpp
   scopeinfo.cpp
   sharedfloat.cpp
   sm.cpp
@@ -57,11 +60,16 @@ set( SOURCES
   lsra.cpp
   emitxarch.cpp
   targetamd64.cpp
+  targetarm.cpp
+  targetarm64.cpp
+  targetx86.cpp
   lowerxarch.cpp
   codegenxarch.cpp
   simd.cpp
   simdcodegenxarch.cpp
   unwindamd64.cpp
+  unwindarm.cpp
+  unwindarm64.cpp
 )
 
 if( WIN32 )

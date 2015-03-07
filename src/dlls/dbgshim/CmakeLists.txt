@@ -37,3 +37,6 @@ target_link_libraries(dbgshim ${DBGSHIM_LIBRARIES})
 # add the install targets
 install (TARGETS dbgshim DESTINATION .)
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/$<CONFIG>/dbgshim.pdb DESTINATION PDB)
+
+# x86 uses debugshim.h which is in src\debug\shim
+include_directories(../../debug/shim)
