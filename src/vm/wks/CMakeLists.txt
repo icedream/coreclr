@@ -21,9 +21,9 @@ foreach(DEFINITION IN LISTS COMPILE_DEFINITIONS_LIST)
         # The entry contains generator expression, so insert the definition into a definitions list
         # corresponding to the config
         string(TOUPPER ${CMAKE_MATCH_1} CONFIG)
-        set(ASM_DEFINITIONS_${CONFIG} ${ASM_DEFINITIONS_${CONFIG}} ${CMAKE_MATCH_2}) 
+        set(ASM_DEFINITIONS_${CONFIG} ${ASM_DEFINITIONS_${CONFIG}} ${CMAKE_MATCH_2})
     else()
-        list(APPEND ASM_DEFINITIONS ${DEFINITION})        
+        list(APPEND ASM_DEFINITIONS ${DEFINITION})
     endif()
 endforeach()
 
@@ -43,8 +43,8 @@ endif()
 
 add_custom_command(
     # The AsmConstants.inc will be built in the pre-build phase of the cee_wks build
-    TARGET cee_wks PRE_BUILD 
-    COMMAND ${POWERSHELL} -NoProfile -ExecutionPolicy Bypass \"& \"\"${VM_DIR}/h2inc.ps1\"\"\" \"\"\"${VM_DIR}/${ARCH_SOURCE_DIR}/asmconstants.h\"\"\" >"${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp"
+    TARGET cee_wks PRE_BUILD
+    COMMAND ${POWERSHELL} -NoProfile -ExecutionPolicy Bypass \"& \"\"${VM_DIR}/h2inc.ps1\"\"\" \"\"\"${VM_DIR}/${ARCH_SOURCES_DIR}/asmconstants.h\"\"\" >"${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp"
     COMMAND ${CMAKE_CXX_COMPILER} ${DEFINITIONS} /EP "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp" >"${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.inc"
 )
 
