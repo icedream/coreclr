@@ -1,6 +1,4 @@
-if(IS_64BIT_BUILD)
-  add_definitions(-DSOS_TARGET_AMD64=1)
-endif()
+add_definitions(-DSOS_TARGET_${CMAKE_TARGET_ARCHITECTURE_CODE_UPPER}=1)
 add_definitions(-DSTRIKE)
 
 remove_definitions(-DUNICODE)
