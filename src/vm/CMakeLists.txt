@@ -52,6 +52,7 @@ set(VM_SOURCES_DAC_AND_WKS_COMMON
     encee.cpp
     excep.cpp
     exstate.cpp
+    exinfo.cpp
     field.cpp
     formattype.cpp
     fptrstubs.cpp
