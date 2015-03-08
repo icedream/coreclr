@@ -8,7 +8,6 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/AddPrecompiledHeader.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/ConvertToAbsolutePath.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetCompileDefinitions.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetIncludeDirectories.cmake")
-include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetVC12Vars.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/PreprocessDefFile.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/TargetArch.cmake")
 
@@ -50,8 +49,15 @@ string(TOUPPER "${CMAKE_TARGET_ARCHITECTURE_CODE}" CMAKE_TARGET_ARCHITECTURE_COD
 if(WIN32)
   message(STATUS "Detected platform: Windows")
 
+  if(NOT MSVC)
+    message(FATAL_ERROR "A Microsoft Visual C/C++ compiler seems to be missing. You need to install Visual Studio 2013 or newer to build this project.")
+  endif()
+
+  if(MSVC_VERSION LESS 1800)
+    message(FATAL_ERROR "Your current Visual Studio version is too old. You need to install Visual Studio 2013 or newer to build this project.")
+  endif()
+
   set(CLR_CMAKE_PLATFORM_WINDOWS 1)
-  enable_language(ASM_MASM)
 
   # TODO: The following options are set by the razzle build
   # set(OVERRIDE_CMAKE_CXX_FLAGS 1)
@@ -203,7 +209,6 @@ elseif(UNIX)
   add_compile_options(-Wno-self-assign)
   add_compile_options(-Wno-bitfield-constant-conversion)
   add_compile_options(-Wno-unused-value)
-
   add_compile_options(-Wno-unknown-warning-option)
 
   #These seem to indicate real issues
@@ -255,15 +260,16 @@ else()
 
 endif()
 
-# Visual Studio installation
-GetVC12Vars(VS12)
-if(WIN32)
-  # ASM compiler
-  set(ASM_DIALECT "_MASM")
-  set(CMAKE_CL_64 ${VS12_ML_IS64})
-  set(CMAKE_ASM_MASM_COMPILER_INIT ${VS12_ML})
-  include(${CMAKE_ROOT}/Modules/CMakeDetermineASMCompiler.cmake)
+# MASM compiler stuff
+if(NOT IS_64BIT_BUILD)
+  set(CMAKE_ASM_MASM_FLAGS_INIT "${CMAKE_ASM_MASM_FLAGS_INIT} /FPi")
 endif()
+if(MSVC)
+  enable_language(ASM_MASM)
+  if(CMAKE_ASM_MASM_COMPILER_WORKS)
+    set(ASM_DIALECT "_MASM")
+  endif(CMAKE_ASM_MASM_COMPILER_WORKS)
+endif(MSVC)
 
 # Includes
 if (CLR_CMAKE_PLATFORM_WINDOWS)
