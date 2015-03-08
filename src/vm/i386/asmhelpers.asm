@@ -852,7 +852,7 @@ SkipEBP:
 doRet:
     xor         eax, eax
     retn
-FASTCALL_ENDFUNC HelperMethodFrameRestoreState
+FASTCALL_ENDFUNC ; HelperMethodFrameRestoreState
 
 
 ifndef FEATURE_IMPLICIT_TLS
