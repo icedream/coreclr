@@ -58,8 +58,7 @@ function(ConvertHeaderToASM filePath outputVariable)
 
 				# Ignore #defines with arguments
 				if(NOT "${def_name}" MATCHES "\\(")
-					set(HEX_NUMBER_PATTERN "^[ \\t]*0x([0-9A-Fa-f]+)[ \\t]*$")
-					set(DECIMAL_NUMBER_PATTERN "^[ \\t]*(\\-?[0-9\\.]+)[ \\t]*$")
+					set(HEX_NUMBER_PATTERN "0x0*([0-9A-Fa-f]+)")
 					set(TEXT_PATTERN "\"(.*)\"")
 					set(def_operation "EQU")
 
