@@ -30,7 +30,12 @@ get_include_directories(MIDL_INCLUDE_DIRECTORIES)
 
 
 # Run custom midl command over each idl file
-FIND_PROGRAM( MIDL midl.exe )
+find_package(VS120)
+find_program(MIDL midl.exe PATHS ${VS120_PATH})
+if(MIDL MATCHES "\\-NOTFOUND\$")
+  find_package(VS110 REQUIRED)
+  find_program(MIDL midl.exe PATHS ${VS110_PATH})
+endif()
 foreach(GENERATE_IDL IN LISTS CORGUIDS_IDL_SOURCES)
    get_filename_component(IDLNAME ${GENERATE_IDL} NAME_WE)
    set(OUT_NAME ${CMAKE_CURRENT_BINARY_DIR}/idls_out/${IDLNAME}_i.c)
