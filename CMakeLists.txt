@@ -278,6 +278,14 @@ endif(MSVC)
 
 # Includes
 
+if(NOT CMAKE_BUILD_TYPE)
+  if(WIN32)
+    set(CMAKE_BUILD_TYPE "DEBUG;RELEASE;RELWITHDEBINFO" CACHE STRING "Build type (Debug, Release, RelWithDebInfo - use \";\" separation for multi-configurations)" FORCE)
+  else()
+    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "Build type (Debug, Release, RelWithDebInfo)" FORCE)
+  endif()
+endif()
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "DEBUG;RELEASE;RELWITHDEBINFO")
 
 # PAL system for Unix systems
 if(CLR_CMAKE_PLATFORM_UNIX)
