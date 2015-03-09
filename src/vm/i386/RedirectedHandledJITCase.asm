@@ -58,7 +58,7 @@ _RedirectedHandledJITCaseFor&reason&_Stub@0 PROC PUBLIC
         call            _GetCurrentSavedRedirectContext@0
 
         mov             [ebp-4], eax
-.errnz REDIRECTSTUB_EBP_OFFSET_CONTEXT + 4, REDIRECTSTUB_EBP_OFFSET_CONTEXT has changed - update asm stubs
+.errnz REDIRECTSTUB_EBP_OFFSET_CONTEXT + 4, "REDIRECTSTUB_EBP_OFFSET_CONTEXT has changed - update asm stubs"
 
         ;
         ; Fetch the interrupted eip and save it as our return address.
