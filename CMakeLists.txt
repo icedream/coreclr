@@ -8,6 +8,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/AddPrecompiledHeader.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/ConvertToAbsolutePath.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetCompileDefinitions.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/GetIncludeDirectories.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/H2Inc.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/PreprocessDefFile.cmake")
 include("${CMAKE_CURRENT_SOURCE_DIR}/CMake/include/TargetArch.cmake")
 

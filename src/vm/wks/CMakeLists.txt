@@ -8,14 +8,12 @@ endif (WIN32)
 
 add_library(cee_wks ${VM_SOURCES_WKS} ${VM_SOURCES_WKS_AMD64_ASM})
 
-if (WIN32)
 # Get the current list of definitions
 get_compile_definitions(DEFINITIONS)
 
-get_directory_property(COMPILE_DEFINITIONS_LIST COMPILE_DEFINITIONS)
-
 # Extract the definitions for the ASM code. Since there is a bug in the cmake that prevents us from
 # using the generator expressions, we split the definitions into lists based on the configuration.
+get_directory_property(COMPILE_DEFINITIONS_LIST COMPILE_DEFINITIONS)
 foreach(DEFINITION IN LISTS COMPILE_DEFINITIONS_LIST)
     if (${DEFINITION} MATCHES "^\\$<\\$<CONFIG:([^>]+)>:([^>]+)>$")
         # The entry contains generator expression, so insert the definition into a definitions list
@@ -35,17 +33,53 @@ foreach(CONFIG IN LISTS CMAKE_CONFIGURATION_TYPES)
     set_property(SOURCE ${VM_SOURCES_WKS_AMD64_ASM} PROPERTY COMPILE_DEFINITIONS_${CONFIG} ${ASM_DEFINITIONS_${CONFIG}})
 endforeach()
 
-# Convert AsmConstants.h into AsmConstants.inc
-find_program(POWERSHELL powershell)
-if (POWERSHELL STREQUAL "POWERSHELL-NOTFOUND")
-    message(FATAL_ERROR "POWERSHELL not found")
-endif()
+# Convert AsmConstants.h into AsmConstants.inc using CMake
+ConvertHeaderToASMFile("${VM_DIR}/${ARCH_SOURCES_DIR}/asmconstants.h" "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp")
 
+# Preprocess new generated file
+foreach(CONFIG Debug Release RelWithDebInfo)
+  # generate preprocessed asm code
+  string(TOUPPER "${CONFIG}" CONFIG_UPPER)
+  message(STATUS "Generating ASM definitions for ${CONFIG} configuration...")
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER} /nologo ${DEFINITIONS_SHARED} ${DEFINITIONS_${CONFIG_UPPER}} /EP "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp"
+       OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants_${CONFIG}.inc"
+       ERROR_VARIABLE PREPROCESSING_OUTPUT
+       RESULT_VARIABLE PREPROCESSING_RESULT)
+  if(NOT PREPROCESSING_RESULT EQUAL 0)
+    message(FATAL_ERROR "Preprocessing of converted definitions for ${CONFIG} configuration failed with error code ${PREPROCESSING_RESULT}: ${PREPROCESSING_OUTPUT}")
+  endif()
+  file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.log")
+
+  # test compile to check for errors
+  message(STATUS "Testing generated ASM for ${CONFIG} configuration against ${CMAKE_ASM_MASM_COMPILER}...")
+  file(READ "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants_${CONFIG}.inc" TEST_ASM_DEFINITIONS)
+  if(CMAKE_TARGET_ARCHITECTURE_CODE STREQUAL "x86")
+    set(TEST_ASM_ARCH_CODE ".586")
+  else()
+    set(TEST_ASM_ARCH_CODE "")
+  endif()
+  set(TEST_ASM_CODE "${TEST_ASM_ARCH_CODE}
+.model flat
+${TEST_ASM_DEFINITIONS}
+option casemap:none
+.code
+nop
+end")
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstantsTest.asm" "${TEST_ASM_CODE}")
+  execute_process(COMMAND ${CMAKE_ASM_MASM_COMPILER} /c /nologo /FoNUL ${DEFINITIONS_SHARED} ${DEFINITIONS_${CONFIG_UPPER}} /W3 AsmConstantsTest.asm
+    OUTPUT_VARIABLE PREPROCESSING_OUTPUT
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    RESULT_VARIABLE PREPROCESSING_RESULT)
+  if(NOT PREPROCESSING_RESULT EQUAL 0)
+    message(FATAL_ERROR "Test compile of converted definitions for ${CONFIG} configuration failed with error code ${PREPROCESSING_RESULT} - ${PREPROCESSING_OUTPUT}")
+  endif()
+  file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstantsTest.log")
+  file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstantsTest.asm")
+
+endforeach()
+file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}" TARGET_OUTPUT_DIR)
 add_custom_command(
-    # The AsmConstants.inc will be built in the pre-build phase of the cee_wks build
-    TARGET cee_wks PRE_BUILD
-    COMMAND ${POWERSHELL} -NoProfile -ExecutionPolicy Bypass \"& \"\"${VM_DIR}/h2inc.ps1\"\"\" \"\"\"${VM_DIR}/${ARCH_SOURCES_DIR}/asmconstants.h\"\"\" >"${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp"
-    COMMAND ${CMAKE_CXX_COMPILER} ${DEFINITIONS} /EP "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp" >"${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.inc"
+  # The correct AsmConstants.inc will be selected in the pre-build phase of the cee_wks build
+  TARGET cee_wks PRE_BUILD
+  COMMAND copy "${TARGET_OUTPUT_DIR}\\AsmConstants_\$(Configuration).inc" "${TARGET_OUTPUT_DIR}\\AsmConstants.inc"
 )
-
-endif (WIN32)
