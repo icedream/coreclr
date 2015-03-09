@@ -165,7 +165,7 @@ VOID COMInterfaceMarshaler::InitializeFlags()
         {
             GCX_PREEMP();
             
-            INT_PTR pCCW;
+            long long pCCW;
             IfFailThrow(m_pIManaged->GetObjectIdentity(&bstrProcessGUID, (int*)&m_dwServerDomainId, &pCCW));
 
             // we may get back a pointer-sized value but only the lower 32-bits are guaranteed to be valid and
