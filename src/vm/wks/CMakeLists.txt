@@ -37,10 +37,10 @@ endforeach()
 ConvertHeaderToASMFile("${VM_DIR}/${ARCH_SOURCES_DIR}/asmconstants.h" "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp")
 
 # Preprocess new generated file
+message(STATUS "Generating ASM definitions...")
 foreach(CONFIG Debug Release RelWithDebInfo)
   # generate preprocessed asm code
   string(TOUPPER "${CONFIG}" CONFIG_UPPER)
-  message(STATUS "Generating ASM definitions for ${CONFIG} configuration...")
   execute_process(COMMAND ${CMAKE_CXX_COMPILER} /nologo ${DEFINITIONS_SHARED} ${DEFINITIONS_${CONFIG_UPPER}} /EP "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp"
        OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants_${CONFIG}.inc"
        ERROR_VARIABLE PREPROCESSING_OUTPUT
@@ -51,7 +51,6 @@ foreach(CONFIG Debug Release RelWithDebInfo)
   file(REMOVE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.log")
 
   # test compile to check for errors
-  message(STATUS "Testing generated ASM for ${CONFIG} configuration against ${CMAKE_ASM_MASM_COMPILER}...")
   file(READ "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants_${CONFIG}.inc" TEST_ASM_DEFINITIONS)
   if(CMAKE_TARGET_ARCHITECTURE_CODE STREQUAL "x86")
     set(TEST_ASM_ARCH_CODE ".586")
@@ -66,7 +65,7 @@ option casemap:none
 nop
 end")
   file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstantsTest.asm" "${TEST_ASM_CODE}")
-  execute_process(COMMAND ${CMAKE_ASM_MASM_COMPILER} /c /nologo /FoNUL ${DEFINITIONS_SHARED} ${DEFINITIONS_${CONFIG_UPPER}} /W3 AsmConstantsTest.asm
+  execute_process(COMMAND ${CMAKE_ASM_MASM_COMPILER} ${CMAKE_ASM_MASM_COMPILER_ARG1} ${CMAKE_ASM_MASM_COMPILER_FLAGS} /c /nologo /FoNUL ${DEFINITIONS_SHARED} ${DEFINITIONS_${CONFIG_UPPER}} /W3 AsmConstantsTest.asm
     OUTPUT_VARIABLE PREPROCESSING_OUTPUT
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     RESULT_VARIABLE PREPROCESSING_RESULT)
@@ -83,3 +82,22 @@ add_custom_command(
   TARGET cee_wks PRE_BUILD
   COMMAND copy "${TARGET_OUTPUT_DIR}\\AsmConstants_\$(Configuration).inc" "${TARGET_OUTPUT_DIR}\\AsmConstants.inc"
 )
+
+# VERY VERY dirty hack to get Visual Studio to use our own defined ASM compiler instead of hardcoded ml.exe.
+# As a matter of fact, this used to be an old trick viruses used on DOS. Heh.
+file(TO_NATIVE_PATH "${CMAKE_ASM_MASM_COMPILER}" asm_compiler_native)
+set(jwasm_bat_code "")
+if(CMAKE_ASM_JWASM_COMPILER_WORKS)
+  set(jwasm_bat_code "set compiler_args=%compiler_args:/Ta=%
+set compiler_args=%compiler_args:/errorReport:prompt=%
+set compiler_args=%compiler_args:/errorReport:none=%
+set compiler_args=%compiler_args:/errorReport:queue=%
+set compiler_args=%compiler_args:/errorReport:send=%
+")
+endif()
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ml.exe.bat" "@echo off
+SetLocal
+set compiler_args=%*
+${jwasm_bat_code}echo \"${asm_compiler_native}\" ${CMAKE_ASM_MASM_COMPILER_ARG1} ${CMAKE_ASM_MASM_COMPILER_FLAGS} %compiler_args% 1>&2
+\"${asm_compiler_native}\" ${CMAKE_ASM_MASM_COMPILER_ARG1} ${CMAKE_ASM_MASM_COMPILER_FLAGS} %compiler_args%
+exit /b %errorlevel%")

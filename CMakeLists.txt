@@ -266,19 +266,46 @@ else()
 
 endif()
 
-# MASM compiler stuff
+# ASM compiler stuff
+set(CMAKE_ASM_MASM_COMPILER_FLAGS "${CMAKE_ASM_MASM_COMPILER_FLAGS} /Zm") # We need to be able to declare scoped code labels => MASM 5.10 compat
 if(NOT IS_64BIT_BUILD)
-  set(CMAKE_ASM_MASM_FLAGS_INIT "${CMAKE_ASM_MASM_FLAGS_INIT} /FPi")
+  set(CMAKE_ASM_MASM_COMPILER_FLAGS "${CMAKE_ASM_MASM_COMPILER_FLAGS} /FPi")
 endif()
 if(MSVC)
-  enable_language(ASM_MASM)
-  if(CMAKE_ASM_MASM_COMPILER_WORKS)
-    set(ASM_DIALECT "_MASM")
-  endif(CMAKE_ASM_MASM_COMPILER_WORKS)
+  enable_language(ASM_JWASM)
+  if(CMAKE_ASM_JWASM_COMPILER_WORKS)
+    message(STATUS "Now using JWASM compiler: ${CMAKE_ASM_JWASM_COMPILER}")
+    # Since JWASM is MASM-compatible, we can just use it as MASM compiler as well
+    set(CMAKE_ASM_MASM_COMPILER "${CMAKE_ASM_JWASM_COMPILER}")
+    set(CMAKE_ASM_MASM_COMPILER_ARG1 "${CMAKE_ASM_MASM_COMPILER_ARG1} ${CMAKE_ASM_JWASM_COMPILER_ARG1}")
+    set(CMAKE_ASM_MASM_COMPILER_FLAGS "${CMAKE_ASM_MASM_COMPILER_FLAGS} ${CMAKE_ASM_JWASM_FLAGS}")
+    set(CMAKE_ASM_MASM_COMPILER_LOADED "${CMAKE_ASM_JWASM_COMPILER_LOADED}")
+    set(CMAKE_ASM_MASM_COMPILER_ID "${CMAKE_ASM_JWASM_COMPILER_ID}")
+    set(CMAKE_ASM_MASM_COMPILER_ENV_VAR "${CMAKE_ASM_JWASM_COMPILER_ENV_VAR}")
+    set(CMAKE_ASM_MASM_IGNORE_EXTENSIONS "${CMAKE_ASM_JWASM_IGNORE_EXTENSIONS}")
+    set(CMAKE_ASM_MASM_LINKER_PREFERENCE "${CMAKE_ASM_JWASM_LINKER_PREFERENCE}")
+    enable_language(ASM_MASM)
+    set(CMAKE_ASM_MASM_COMPILER_FLAGS "-Zg -Zne -Zv8 -coff ${CMAKE_ASM_MASM_COMPILER_FLAGS}")
+    if(IS_64BIT_BUILD)
+      set(CMAKE_ASM_MASM_COMPILER_FLAGS "-win64 ${CMAKE_ASM_MASM_COMPILER_FLAGS}")
+    endif()
+  endif()
+  if(CMAKE_ASM_JWASM_COMPILER_WORKS)
+    message(STATUS "Now using MASM-compatible JWasm compiler: ${CMAKE_ASM_MASM_COMPILER}")
+  elseif(CMAKE_ASM_MASM_COMPILER_WORKS)
+    message(STATUS "Now using MASM compiler: ${CMAKE_ASM_MASM_COMPILER}")
+  else()
+    enable_language(ASM)
+    message(STATUS "Now using ASM compiler: ${CMAKE_ASM_COMPILER}")
+  endif()
+else()
+  enable_language(ASM)
+  message(STATUS "Now using ASM compiler: ${CMAKE_ASM_COMPILER}")
 endif(MSVC)
 
 # Includes
 
+# default CMAKE_BUILD_TYPE. On Windows use multiple configurations.
 if(NOT CMAKE_BUILD_TYPE)
   if(WIN32)
     set(CMAKE_BUILD_TYPE "DEBUG;RELEASE;RELWITHDEBINFO" CACHE STRING "Build type (Debug, Release, RelWithDebInfo - use \";\" separation for multi-configurations)" FORCE)
