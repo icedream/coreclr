@@ -287,7 +287,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "DEBUG;RELEASE;RELWITHDEBINFO")
 
-# PAL system for Unix systems
+# PAL system
+add_subdirectory(src/debug/debug-pal)
 if(CLR_CMAKE_PLATFORM_UNIX)
   add_subdirectory(src/ToolBox/SOS/lldbplugin)
   add_subdirectory(src/pal)
@@ -352,6 +353,11 @@ add_definitions(-DFEATURE_WINMD_RESILIENT)
 add_definitions(-DFEATURE_MULTICOREJIT)
 add_definitions(-DFEATURE_USE_ASM_GC_WRITE_BARRIERS)
 add_definitions(-DFEATURE_SYMDIFF)
+
+if(CLR_CMAKE_PLATFORM_UNIX)
+    add_definitions(-DFEATURE_DBGIPC_TRANSPORT_DI)
+    add_definitions(-DFEATURE_DBGIPC_TRANSPORT_VM)
+endif(CLR_CMAKE_PLATFORM_UNIX)
 add_definitions(-D_SECURE_SCL=0)
 add_definitions(-D_NEW_SDK=1)
 add_definitions(-DOFFICIAL_BUILD=0)
