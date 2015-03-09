@@ -807,7 +807,8 @@ endif
     ; restore the registers from the m_MachState stucture.  Note that
     ; we only do this for register that where not saved on the stack
     ; at the time the machine state snapshot was taken.
-    cmp         dword ptr [eax+MachState__pRetAddr], 0
+
+    cmp         [eax+MachState__pRetAddr], 0
 
 ifdef _DEBUG
     jnz         noConfirm
@@ -818,7 +819,7 @@ ifdef _DEBUG
     push        ecx     ; HelperFrame*
     call        _HelperMethodFrameConfirmState@20
     ; on return, eax = MachState*
-    cmp         dword ptr [eax+MachState__pRetAddr], 0
+    cmp         [eax+MachState__pRetAddr], 0
 noConfirm:
 endif
 
@@ -851,7 +852,7 @@ SkipEBP:
 doRet:
     xor         eax, eax
     retn
-FASTCALL_ENDFUNC ; HelperMethodFrameRestoreState
+FASTCALL_ENDFUNC HelperMethodFrameRestoreState
 
 
 ifndef FEATURE_IMPLICIT_TLS
@@ -1474,7 +1475,7 @@ _ProfileEnterNaked@4 proc public
     ;
     push    dword ptr [esp+8] ; EIP of the managed code that we return to.	-- struct ip field
     push    ebp          ; Methods are always EBP framed
-    add     dword ptr [esp], 8     ; Skip past the return IP, straight to the stack args that were passed to our caller
+    add     [esp], 8     ; Skip past the return IP, straight to the stack args that were passed to our caller
                          ; Skip past saved EBP value: 4 bytes
                          ;   - plus return address from caller's caller: 4 bytes   
                          ;
@@ -1527,7 +1528,7 @@ _ProfileLeaveNaked@4 proc public
     ;
     push    dword ptr [esp+8] ; EIP of the managed code that we return to.	-- struct ip field
     push    ebp          ; Methods are always EBP framed
-    add     dword ptr [esp], 8     ; Skip past the return IP, straight to the stack args that were passed to our caller
+    add     [esp], 8     ; Skip past the return IP, straight to the stack args that were passed to our caller
                          ; Skip past saved EBP value: 4 bytes
                          ;   - plus return address from caller's caller: 4 bytes   
                          ;
@@ -1579,7 +1580,7 @@ Continue:
     ; Now see if we have to restore and floating point registers
     ;
 
-    cmp     dword ptr [esp + 16], 0
+    cmp     [esp + 16], 0
     jz      NoRestore
 
     fld     qword ptr [esp + 4]
@@ -1605,7 +1606,7 @@ _ProfileTailcallNaked@4 proc public
     ;
     push    dword ptr [esp+8] ; EIP of the managed code that we return to.	-- struct ip field
     push    ebp          ; Methods are always EBP framed
-    add     dword ptr [esp], 8     ; Skip past the return IP, straight to the stack args that were passed to our caller
+    add     [esp], 8     ; Skip past the return IP, straight to the stack args that were passed to our caller
                          ; Skip past saved EBP value: 4 bytes
                          ;   - plus return address from caller's caller: 4 bytes   
                          ;
