@@ -22,7 +22,7 @@ include asmconstants.inc
 
 ; int __fastcall LazyMachStateCaptureState(struct LazyMachState *pState);
 @LazyMachStateCaptureState@4 proc public
-        mov [ecx+MachState__pRetAddr], 0 ; marks that this is not yet valid
+        mov dword ptr [ecx+MachState__pRetAddr], 0 ; marks that this is not yet valid
         mov [ecx+MachState__edi], edi    ; remember register values
 	mov [ecx+MachState__esi], esi 
         mov [ecx+MachState__ebx], ebx
