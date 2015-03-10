@@ -7,12 +7,14 @@ add_definitions(-DSTRIKE)
 remove_definitions(-DUNICODE)
 remove_definitions(-D_UNICODE)
 
+find_package(DIASDK REQUIRED)
+
 if(WIN32)
   include_directories(inc)
   include_directories(BEFORE ${VM_DIR})
   include_directories(${CLR_DIR}/src/gcdump)
   include_directories(${CLR_DIR}/src/debug/shim)
-  include_directories("$ENV{VSInstallDir}/DIA SDK/include")
+  include_directories("${DIASDK_INCLUDE_DIR}")
 
   add_definitions(-DUSE_STL)
 
