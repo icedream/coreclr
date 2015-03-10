@@ -808,7 +808,7 @@ endif
     ; we only do this for register that where not saved on the stack
     ; at the time the machine state snapshot was taken.
 
-    cmp         [eax+MachState__pRetAddr], 0
+    cmp         dword ptr [eax+MachState__pRetAddr], 0
 
 ifdef _DEBUG
     jnz         noConfirm
@@ -819,7 +819,7 @@ ifdef _DEBUG
     push        ecx     ; HelperFrame*
     call        _HelperMethodFrameConfirmState@20
     ; on return, eax = MachState*
-    cmp         [eax+MachState__pRetAddr], 0
+    cmp         dword ptr [eax+MachState__pRetAddr], 0
 noConfirm:
 endif
 
