@@ -8,6 +8,10 @@ include_directories("../inc")
 # Enable the following for UNIX altjit on Windows
 # add_definitions(-DALT_JIT)
 
+if (IS_64BIT_BUILD EQUAL 0)
+  add_definitions(-DLEGACY_BACKEND)
+endif (IS_64BIT_BUILD EQUAL 0)
+
 set( SOURCES
   alloc.cpp
   bitset.cpp
@@ -56,21 +60,33 @@ set( SOURCES
   assertionprop.cpp
   rangecheck.cpp
   loopcloning.cpp
-  lower.cpp
-  lsra.cpp
   emitxarch.cpp
   targetamd64.cpp
   targetarm.cpp
   targetarm64.cpp
   targetx86.cpp
-  lowerxarch.cpp
-  codegenxarch.cpp
-  simd.cpp
-  simdcodegenxarch.cpp
   unwindamd64.cpp
   unwindarm.cpp
   unwindarm64.cpp
 )
+
+if (IS_64BIT_BUILD EQUAL 0)
+  set( SOURCES
+    ${SOURCES}
+    codegenlegacy.cpp
+    stackfp.cpp
+  )
+else()
+  set( SOURCES
+    ${SOURCES}
+    lowerxarch.cpp
+    codegenxarch.cpp
+    simd.cpp
+    simdcodegenxarch.cpp
+    lower.cpp
+    lsra.cpp
+  )  
+endif()
 
 if( WIN32 )
 
