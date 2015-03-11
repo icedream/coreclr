@@ -117,18 +117,6 @@ echo.
 if /i "%__BuildArch%" == "x64" call "%VS120COMNTOOLS%\..\..\VC\vcvarsall.bat" x86_amd64
 if /i "%__BuildArch%" == "x86" call "%VS120COMNTOOLS%\..\..\VC\vcvarsall.bat" x86
 
-if exist "%VSINSTALLDIR%DIA SDK" goto GenVSSolution
-echo Error: DIA SDK is missing at "%VSINSTALLDIR%DIA SDK". ^
-This is due to a bug in the Visual Studio installer. It does not install DIA SDK at "%VSINSTALLDIR%" but rather ^
-at VS install location of previous version. Workaround is to copy DIA SDK folder from VS install location ^
-of previous version to "%VSINSTALLDIR%" and then resume build.
-:: DIA SDK not included in Express editions
-echo Visual Studio 2013 Express does not include the DIA SDK. ^
-You need Visual Studio 2013 Community (free).
-echo See: https://github.com/dotnet/coreclr/wiki/Developer-Guide#prerequisites
-goto :eof
-
-:GenVSSolution
 :: Regenerate the VS solution
 pushd "%__IntermediatesDir%"
 call "%__SourceDir%\pal\tools\gen-buildsys-win.bat" "%__ProjectDir%"
