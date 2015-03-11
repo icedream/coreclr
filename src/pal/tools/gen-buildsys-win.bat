@@ -9,7 +9,7 @@ if NOT %argC%==1 GOTO :USAGE
 if %1=="/?" GOTO :USAGE
 
 setlocal
-set basePath=%1
+set basePath=%~dp0
 :: remove quotes
 set "basePath=%basePath:"=%"
 
@@ -23,9 +23,9 @@ for /f "delims=" %%a in ('powershell -NoProfile -ExecutionPolicy RemoteSigned "&
 
 :DoGen
 if /i "%__BuildArch%"=="x86" (
-  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\src\pal\tools\windows-compiler-override.txt" -G "Visual Studio 12 2013" %1
+  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\windows-compiler-override.txt" -G "Visual Studio 12 2013" %1
 ) else (
-  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\src\pal\tools\windows-compiler-override.txt" -G "Visual Studio 12 2013 Win64" %1
+  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\windows-compiler-override.txt" -G "Visual Studio 12 2013 Win64" %1
 )
 endlocal
 GOTO :DONE
