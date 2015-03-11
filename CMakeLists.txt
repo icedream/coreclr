@@ -408,7 +408,7 @@ if (IS_64BIT_BUILD EQUAL 1)
 endif (IS_64BIT_BUILD EQUAL 1)
 
 # debug build flags
-set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:_DEBUG> $<$<CONFIG:Debug>:_DBG> $<$<CONFIG:Debug>:DEBUG> $<NOT:$<CONFIG:Debug>:NDEBUG>)
+set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:_DEBUG> $<$<CONFIG:Debug>:_DBG> $<$<CONFIG:Debug>:DEBUG> $<$<CONFIG:Release>:NDEBUG>) $<$<CONFIG:RelWithDebInfo>:NDEBUG>)
 set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:BUILDENV_CHECKED=1>)
 
 # use the shipped implementation code for intrinsics
