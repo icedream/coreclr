@@ -74,7 +74,6 @@ if [[ -n "$LLDB_INCLUDE_DIR" ]]; then
 fi
 
 cmake \
-  "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$1/src/pal/tools/clang-compiler-override.txt" \
   "-DCMAKE_AR=$llvm_ar" \
   "-DCMAKE_LINKER=$llvm_link" \
   "-DCMAKE_NM=$llvm_nm" \

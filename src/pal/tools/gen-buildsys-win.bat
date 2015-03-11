@@ -23,9 +23,9 @@ for /f "delims=" %%a in ('powershell -NoProfile -ExecutionPolicy RemoteSigned "&
 
 :DoGen
 if /i "%__BuildArch%"=="x86" (
-  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\windows-compiler-override.txt" -G "Visual Studio 12 2013" %1
+  "%CMakePath%" -G "Visual Studio 12 2013" %1
 ) else (
-  "%CMakePath%" "-DCMAKE_USER_MAKE_RULES_OVERRIDE=%basePath%\windows-compiler-override.txt" -G "Visual Studio 12 2013 Win64" %1
+  "%CMakePath%" -G "Visual Studio 12 2013 Win64" %1
 )
 endlocal
 GOTO :DONE
