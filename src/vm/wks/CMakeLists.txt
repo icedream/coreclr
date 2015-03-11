@@ -59,7 +59,11 @@ ${TEST_ASM_DEFINITIONS}
 option casemap:none
 .code")
   else()
-    set(TEST_ASM_ARCH_CODE "${TEST_ASM_DEFINITIONS}")
+    set(TEST_ASM_ARCH_CODE ".X64
+.model flat
+${TEST_ASM_DEFINITIONS}
+  option casemap:none
+.code")
   endif()
   set(TEST_ASM_CODE "${TEST_ASM_ARCH_CODE}
 nop
