@@ -53,15 +53,15 @@ foreach(CONFIG Debug Release RelWithDebInfo)
   # test compile to check for errors
   file(READ "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants_${CONFIG}.inc" TEST_ASM_DEFINITIONS)
   if(CMAKE_TARGET_ARCHITECTURE_CODE STREQUAL "x86")
-    set(TEST_ASM_ARCH_CODE ".586")
-  else()
-    set(TEST_ASM_ARCH_CODE "")
-  endif()
-  set(TEST_ASM_CODE "${TEST_ASM_ARCH_CODE}
+    set(TEST_ASM_ARCH_CODE ".586
 .model flat
 ${TEST_ASM_DEFINITIONS}
 option casemap:none
-.code
+.code")
+  else()
+    set(TEST_ASM_ARCH_CODE "${TEST_ASM_DEFINITIONS}")
+  endif()
+  set(TEST_ASM_CODE "${TEST_ASM_ARCH_CODE}
 nop
 end")
   file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstantsTest.asm" "${TEST_ASM_CODE}")
