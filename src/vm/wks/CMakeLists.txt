@@ -41,7 +41,7 @@ message(STATUS "Generating ASM definitions...")
 foreach(CONFIG Debug Release RelWithDebInfo)
   # generate preprocessed asm code
   string(TOUPPER "${CONFIG}" CONFIG_UPPER)
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} /nologo ${DEFINITIONS_SHARED} ${DEFINITIONS_${CONFIG_UPPER}} /EP "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp"
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER} ${DEFINITIONS_SHARED} ${DEFINITIONS_${CONFIG_UPPER}} -EP "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants.tmp"
        OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/AsmConstants_${CONFIG}.inc"
        ERROR_VARIABLE PREPROCESSING_OUTPUT
        RESULT_VARIABLE PREPROCESSING_RESULT)
